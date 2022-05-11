@@ -1,0 +1,10 @@
+autom4te.cache
+config.status
+config.h
+config.log
+stamp-*
+Makefile
+*~
+src/*.o
+src/vulkan
+src/.deps

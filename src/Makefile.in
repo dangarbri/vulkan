@@ -99,7 +99,8 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_vulkan_OBJECTS = vulkan-main.$(OBJEXT) vulkan-window.$(OBJEXT)
+am_vulkan_OBJECTS = vulkan-main.$(OBJEXT) vulkan-window.$(OBJEXT) \
+	vulkan-valium.$(OBJEXT)
 vulkan_OBJECTS = $(am_vulkan_OBJECTS)
 vulkan_LDADD = $(LDADD)
 vulkan_LINK = $(CXXLD) $(vulkan_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
@@ -120,7 +121,7 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/vulkan-main.Po \
-	./$(DEPDIR)/vulkan-window.Po
+	./$(DEPDIR)/vulkan-valium.Po ./$(DEPDIR)/vulkan-window.Po
 am__mv = mv -f
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -257,7 +258,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-vulkan_SOURCES = main.cpp window.cpp
+vulkan_SOURCES = main.cpp window.cpp valium.cpp
 vulkan_CXXFLAGS = -std=c++11
 all: all-am
 
@@ -346,6 +347,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-main.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-valium.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-window.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
@@ -395,6 +397,20 @@ vulkan-window.obj: window.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='window.cpp' object='vulkan-window.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -c -o vulkan-window.obj `if test -f 'window.cpp'; then $(CYGPATH_W) 'window.cpp'; else $(CYGPATH_W) '$(srcdir)/window.cpp'; fi`
+
+vulkan-valium.o: valium.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -MT vulkan-valium.o -MD -MP -MF $(DEPDIR)/vulkan-valium.Tpo -c -o vulkan-valium.o `test -f 'valium.cpp' || echo '$(srcdir)/'`valium.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vulkan-valium.Tpo $(DEPDIR)/vulkan-valium.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='valium.cpp' object='vulkan-valium.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -c -o vulkan-valium.o `test -f 'valium.cpp' || echo '$(srcdir)/'`valium.cpp
+
+vulkan-valium.obj: valium.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -MT vulkan-valium.obj -MD -MP -MF $(DEPDIR)/vulkan-valium.Tpo -c -o vulkan-valium.obj `if test -f 'valium.cpp'; then $(CYGPATH_W) 'valium.cpp'; else $(CYGPATH_W) '$(srcdir)/valium.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vulkan-valium.Tpo $(DEPDIR)/vulkan-valium.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='valium.cpp' object='vulkan-valium.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -c -o vulkan-valium.obj `if test -f 'valium.cpp'; then $(CYGPATH_W) 'valium.cpp'; else $(CYGPATH_W) '$(srcdir)/valium.cpp'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -523,6 +539,7 @@ clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
 		-rm -f ./$(DEPDIR)/vulkan-main.Po
+	-rm -f ./$(DEPDIR)/vulkan-valium.Po
 	-rm -f ./$(DEPDIR)/vulkan-window.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
@@ -570,6 +587,7 @@ installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 		-rm -f ./$(DEPDIR)/vulkan-main.Po
+	-rm -f ./$(DEPDIR)/vulkan-valium.Po
 	-rm -f ./$(DEPDIR)/vulkan-window.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic

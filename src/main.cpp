@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <memory>
 #include "window.h"
+#include "valium.h"
 
 class HelloTriangleApplication {
 public:
@@ -18,6 +19,7 @@ public:
 
 private:
   Window* _window;
+  Valium* _valium;
   
   void initWindow() {
     // Create the window
@@ -25,7 +27,12 @@ private:
   }
   
   void initVulkan() {
-
+    _valium = new Valium("Vulkan");
+    std::vector<std::string> names = _valium->GetAvailableExtensions();
+    std::cout << "available extensions:" << std::endl;
+    for (auto name : names) {
+      std::cout << "\t" << name << std::endl;
+    }
   }
 
   void mainLoop() {
@@ -36,6 +43,7 @@ private:
   }
 
   void cleanup() {
+    delete _valium;
     delete _window;
   }
 };

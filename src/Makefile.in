@@ -100,7 +100,7 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_vulkan_OBJECTS = vulkan-main.$(OBJEXT) vulkan-window.$(OBJEXT) \
-	vulkan-valium.$(OBJEXT)
+	vulkan-valium.$(OBJEXT) vulkan-valium_queue.$(OBJEXT)
 vulkan_OBJECTS = $(am_vulkan_OBJECTS)
 vulkan_LDADD = $(LDADD)
 vulkan_LINK = $(CXXLD) $(vulkan_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
@@ -121,7 +121,9 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/vulkan-main.Po \
-	./$(DEPDIR)/vulkan-valium.Po ./$(DEPDIR)/vulkan-window.Po
+	./$(DEPDIR)/vulkan-valium.Po \
+	./$(DEPDIR)/vulkan-valium_queue.Po \
+	./$(DEPDIR)/vulkan-window.Po
 am__mv = mv -f
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -258,7 +260,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-vulkan_SOURCES = main.cpp window.cpp valium.cpp
+vulkan_SOURCES = main.cpp window.cpp valium.cpp valium_queue.cpp
 vulkan_CXXFLAGS = -std=c++17
 all: all-am
 
@@ -348,6 +350,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-main.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-valium.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-valium_queue.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-window.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
@@ -411,6 +414,20 @@ vulkan-valium.obj: valium.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='valium.cpp' object='vulkan-valium.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -c -o vulkan-valium.obj `if test -f 'valium.cpp'; then $(CYGPATH_W) 'valium.cpp'; else $(CYGPATH_W) '$(srcdir)/valium.cpp'; fi`
+
+vulkan-valium_queue.o: valium_queue.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -MT vulkan-valium_queue.o -MD -MP -MF $(DEPDIR)/vulkan-valium_queue.Tpo -c -o vulkan-valium_queue.o `test -f 'valium_queue.cpp' || echo '$(srcdir)/'`valium_queue.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vulkan-valium_queue.Tpo $(DEPDIR)/vulkan-valium_queue.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='valium_queue.cpp' object='vulkan-valium_queue.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -c -o vulkan-valium_queue.o `test -f 'valium_queue.cpp' || echo '$(srcdir)/'`valium_queue.cpp
+
+vulkan-valium_queue.obj: valium_queue.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -MT vulkan-valium_queue.obj -MD -MP -MF $(DEPDIR)/vulkan-valium_queue.Tpo -c -o vulkan-valium_queue.obj `if test -f 'valium_queue.cpp'; then $(CYGPATH_W) 'valium_queue.cpp'; else $(CYGPATH_W) '$(srcdir)/valium_queue.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vulkan-valium_queue.Tpo $(DEPDIR)/vulkan-valium_queue.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='valium_queue.cpp' object='vulkan-valium_queue.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -c -o vulkan-valium_queue.obj `if test -f 'valium_queue.cpp'; then $(CYGPATH_W) 'valium_queue.cpp'; else $(CYGPATH_W) '$(srcdir)/valium_queue.cpp'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -540,6 +557,7 @@ clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 distclean: distclean-am
 		-rm -f ./$(DEPDIR)/vulkan-main.Po
 	-rm -f ./$(DEPDIR)/vulkan-valium.Po
+	-rm -f ./$(DEPDIR)/vulkan-valium_queue.Po
 	-rm -f ./$(DEPDIR)/vulkan-window.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
@@ -588,6 +606,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 		-rm -f ./$(DEPDIR)/vulkan-main.Po
 	-rm -f ./$(DEPDIR)/vulkan-valium.Po
+	-rm -f ./$(DEPDIR)/vulkan-valium_queue.Po
 	-rm -f ./$(DEPDIR)/vulkan-window.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic

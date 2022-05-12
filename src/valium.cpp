@@ -7,41 +7,36 @@
 #include <cstring>
 #include <optional>
 #include "valium.h"
-
-struct QueueFamilyIndices {
-  std::optional<uint32_t> graphicsFamily;
-
-  bool isComplete() {
-    return graphicsFamily.has_value();
-  }
-};
+#include "valium_queue.h"
 
 struct Valium::impl {
+  /** Vulkan instance for use with vulkan APIs */
   VkInstance instance;
+  /** Holds the physical device that was selected. */
   VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+  /** Self */
   Valium* inst;
 
-  // Creates the vulkan instance and assigns it to instance
+  /** Creates the vulkan instance and assigns it to instance */
   void initVulkanInstance(const char* app_name);
 
-  // Gets the required glfw extensions to pass to vulkan and adds
-  // them to the given info struct.
+  /**
+   * Gets the required glfw extensions to pass to vulkan and adds
+   * them to the given info struct.
+   */
   void setGlfwExtensions(VkInstanceCreateInfo* info);
 
-  // Checks the vulkan API for a list of available extensions
+  /** Checks the vulkan API for a list of available extensions */
   std::vector<VkExtensionProperties> getVulkanExtensions();
 
-  // Verifies that the glfw extensions exist in vulkan's available extensions
+  /** Verifies that the glfw extensions exist in vulkan's available extensions */
   bool verifyGlfwWorksWithVulkan();
 
-  // Selects a GPU to use for rendering
+  /** Selects a GPU to use for rendering */
   void selectPhysicalDevice();
 
-  // Checks if a GPU is suitable for rendering
+  /** Checks if a GPU is suitable for rendering */
   bool isDeviceSuitable(VkPhysicalDevice device);
-
-  // Finds the queue family to use for the pipeline
-  QueueFamilyIndices findGraphicsQueue(VkPhysicalDevice device);
 
 #ifndef NDEBUG
   const std::vector<const char*> validationLayers = {
@@ -67,6 +62,7 @@ Valium::Valium(const char* app_name) {
 Valium::~Valium() {
   std::cout << "Destroyed vulkan instance" << std::endl;
   vkDestroyInstance(_impl->instance, nullptr);
+
   delete _impl;
 }
 
@@ -193,35 +189,11 @@ bool Valium::impl::isDeviceSuitable(VkPhysicalDevice device) {
   vkGetPhysicalDeviceFeatures(device, &features);
 
   // Make sure there is at least one queue that supports graphics.
-  QueueFamilyIndices indices = findGraphicsQueue(device);
+  QueueFamilyIndices indices = ValiumQueue::GetQueueIndices(device);
 
   // No particular features must be specified, but you could return false
   // if a certain feature isn't supported.
   return indices.isComplete();
-}
-
-QueueFamilyIndices Valium::impl::findGraphicsQueue(VkPhysicalDevice device) {
-  QueueFamilyIndices indices;
-  // Logic to find queue family indices to populate struct with
-  uint32_t queueFamilyCount = 0;
-  vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
-
-  std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-  vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
-
-  int i = 0;
-  for (const auto& queueFamily : queueFamilies) {
-    if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-      indices.graphicsFamily = i;
-    }
-
-    if (indices.isComplete()) {
-      break;
-    }
-
-    i++;
-  }
-  return indices;
 }
 
 #ifndef NDEBUG

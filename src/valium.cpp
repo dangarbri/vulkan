@@ -8,6 +8,7 @@
 #include <optional>
 #include "valium.h"
 #include "valium_queue.h"
+#include "validation_layers.h"
 
 struct Valium::impl {
   /** Vulkan instance for use with vulkan APIs */
@@ -37,19 +38,6 @@ struct Valium::impl {
 
   /** Checks if a GPU is suitable for rendering */
   bool isDeviceSuitable(VkPhysicalDevice device);
-
-#ifndef NDEBUG
-  const std::vector<const char*> validationLayers = {
-    "VK_LAYER_KHRONOS_validation"
-  };
-
-  // Enables validation layers for debugging vulkan usage. To be
-  // called when initializing the vulkan instance
-  void enableValidationLayers(VkInstanceCreateInfo* info);
-
-  // Checks that the given validation layers are supported by the system
-  bool checkValidationLayerSupport(std::vector<const char*> validationLayers);
-#endif
 };
 
 Valium::Valium(const char* app_name) {
@@ -92,7 +80,7 @@ void Valium::impl::initVulkanInstance(const char* app_name) {
   createInfo.enabledLayerCount = 0;
 
 #ifndef NDEBUG
-  enableValidationLayers(&createInfo);
+  ValidationLayers::enableValidationLayers(&createInfo);
 #endif
 
   // Load GLFW extensions into the info struct
@@ -195,41 +183,3 @@ bool Valium::impl::isDeviceSuitable(VkPhysicalDevice device) {
   // if a certain feature isn't supported.
   return indices.isComplete();
 }
-
-#ifndef NDEBUG
-void Valium::impl::enableValidationLayers(VkInstanceCreateInfo* info) {
-  if (!checkValidationLayerSupport(validationLayers)) {
-    throw std::runtime_error("The specified validation layers are not supported");
-  }
-
-  std::cout << "Enabling validation layers" << std::endl;
-  info->enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-  info->ppEnabledLayerNames = validationLayers.data();
-}
-
-bool Valium::impl::checkValidationLayerSupport(const std::vector<const char*> validationLayers) {
-    uint32_t layerCount;
-    vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
-
-    std::vector<VkLayerProperties> availableLayers(layerCount);
-    vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
-
-    for (const char* layerName : validationLayers) {
-      bool layerFound = false;
-
-      for (const auto& layerProperties : availableLayers) {
-        if (strcmp(layerName, layerProperties.layerName) == 0) {
-          layerFound = true;
-          break;
-        }
-      }
-
-      if (!layerFound) {
-        std::cout << "Validation layer " << layerName << " is not supported." << std::endl;
-        return false;
-      }
-    }
-
-    return true;
-}
-#endif

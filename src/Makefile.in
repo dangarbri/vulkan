@@ -100,7 +100,8 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_vulkan_OBJECTS = vulkan-main.$(OBJEXT) vulkan-window.$(OBJEXT) \
-	vulkan-valium.$(OBJEXT) vulkan-valium_queue.$(OBJEXT)
+	vulkan-valium.$(OBJEXT) vulkan-valium_queue.$(OBJEXT) \
+	vulkan-validation_layers.$(OBJEXT)
 vulkan_OBJECTS = $(am_vulkan_OBJECTS)
 vulkan_LDADD = $(LDADD)
 vulkan_LINK = $(CXXLD) $(vulkan_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
@@ -121,6 +122,7 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/vulkan-main.Po \
+	./$(DEPDIR)/vulkan-validation_layers.Po \
 	./$(DEPDIR)/vulkan-valium.Po \
 	./$(DEPDIR)/vulkan-valium_queue.Po \
 	./$(DEPDIR)/vulkan-window.Po
@@ -260,7 +262,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-vulkan_SOURCES = main.cpp window.cpp valium.cpp valium_queue.cpp
+vulkan_SOURCES = main.cpp window.cpp valium.cpp valium_queue.cpp validation_layers.cpp
 vulkan_CXXFLAGS = -std=c++17
 all: all-am
 
@@ -349,6 +351,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-main.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-validation_layers.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-valium.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-valium_queue.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-window.Po@am__quote@ # am--include-marker
@@ -428,6 +431,20 @@ vulkan-valium_queue.obj: valium_queue.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='valium_queue.cpp' object='vulkan-valium_queue.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -c -o vulkan-valium_queue.obj `if test -f 'valium_queue.cpp'; then $(CYGPATH_W) 'valium_queue.cpp'; else $(CYGPATH_W) '$(srcdir)/valium_queue.cpp'; fi`
+
+vulkan-validation_layers.o: validation_layers.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -MT vulkan-validation_layers.o -MD -MP -MF $(DEPDIR)/vulkan-validation_layers.Tpo -c -o vulkan-validation_layers.o `test -f 'validation_layers.cpp' || echo '$(srcdir)/'`validation_layers.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vulkan-validation_layers.Tpo $(DEPDIR)/vulkan-validation_layers.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='validation_layers.cpp' object='vulkan-validation_layers.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -c -o vulkan-validation_layers.o `test -f 'validation_layers.cpp' || echo '$(srcdir)/'`validation_layers.cpp
+
+vulkan-validation_layers.obj: validation_layers.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -MT vulkan-validation_layers.obj -MD -MP -MF $(DEPDIR)/vulkan-validation_layers.Tpo -c -o vulkan-validation_layers.obj `if test -f 'validation_layers.cpp'; then $(CYGPATH_W) 'validation_layers.cpp'; else $(CYGPATH_W) '$(srcdir)/validation_layers.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vulkan-validation_layers.Tpo $(DEPDIR)/vulkan-validation_layers.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='validation_layers.cpp' object='vulkan-validation_layers.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -c -o vulkan-validation_layers.obj `if test -f 'validation_layers.cpp'; then $(CYGPATH_W) 'validation_layers.cpp'; else $(CYGPATH_W) '$(srcdir)/validation_layers.cpp'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -556,6 +573,7 @@ clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
 		-rm -f ./$(DEPDIR)/vulkan-main.Po
+	-rm -f ./$(DEPDIR)/vulkan-validation_layers.Po
 	-rm -f ./$(DEPDIR)/vulkan-valium.Po
 	-rm -f ./$(DEPDIR)/vulkan-valium_queue.Po
 	-rm -f ./$(DEPDIR)/vulkan-window.Po
@@ -605,6 +623,7 @@ installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 		-rm -f ./$(DEPDIR)/vulkan-main.Po
+	-rm -f ./$(DEPDIR)/vulkan-validation_layers.Po
 	-rm -f ./$(DEPDIR)/vulkan-valium.Po
 	-rm -f ./$(DEPDIR)/vulkan-valium_queue.Po
 	-rm -f ./$(DEPDIR)/vulkan-window.Po

@@ -259,7 +259,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 vulkan_SOURCES = main.cpp window.cpp valium.cpp
-vulkan_CXXFLAGS = -std=c++11
+vulkan_CXXFLAGS = -std=c++17
 all: all-am
 
 .SUFFIXES:

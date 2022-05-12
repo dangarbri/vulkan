@@ -5,10 +5,20 @@
 #include <string>
 #include <algorithm>
 #include <cstring>
+#include <optional>
 #include "valium.h"
+
+struct QueueFamilyIndices {
+  std::optional<uint32_t> graphicsFamily;
+
+  bool isComplete() {
+    return graphicsFamily.has_value();
+  }
+};
 
 struct Valium::impl {
   VkInstance instance;
+  VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
   Valium* inst;
 
   // Creates the vulkan instance and assigns it to instance
@@ -23,6 +33,15 @@ struct Valium::impl {
 
   // Verifies that the glfw extensions exist in vulkan's available extensions
   bool verifyGlfwWorksWithVulkan();
+
+  // Selects a GPU to use for rendering
+  void selectPhysicalDevice();
+
+  // Checks if a GPU is suitable for rendering
+  bool isDeviceSuitable(VkPhysicalDevice device);
+
+  // Finds the queue family to use for the pipeline
+  QueueFamilyIndices findGraphicsQueue(VkPhysicalDevice device);
 
 #ifndef NDEBUG
   const std::vector<const char*> validationLayers = {
@@ -42,6 +61,7 @@ Valium::Valium(const char* app_name) {
   _impl = new impl();
   _impl->inst = this;
   _impl->initVulkanInstance(app_name);
+  _impl->selectPhysicalDevice();
 }
 
 Valium::~Valium() {
@@ -130,6 +150,78 @@ bool Valium::impl::verifyGlfwWorksWithVulkan() {
   }
 
   return true;
+}
+
+void Valium::impl::selectPhysicalDevice() {
+  uint32_t deviceCount = 0;
+  vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+
+  if (deviceCount == 0) {
+    throw std::runtime_error("failed to find GPUs with Vulkan support");
+  }
+
+  std::vector<VkPhysicalDevice> devices(deviceCount);
+  vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+
+  // TODO: Rate installed devices and select the one with the most
+  // appropriate features
+  for (VkPhysicalDevice device : devices) {
+    if (isDeviceSuitable(device)) {
+      if (physicalDevice == VK_NULL_HANDLE) {
+#ifndef NDEBUG
+        std::cout << "Choosing device " << device << std::endl;
+#endif
+        physicalDevice = device;
+      }
+    }
+  }
+
+  if (physicalDevice == VK_NULL_HANDLE) {
+    throw std::runtime_error("failed to find a suitable GPU!");
+  }
+}
+
+bool Valium::impl::isDeviceSuitable(VkPhysicalDevice device) {
+  VkPhysicalDeviceProperties props;
+  vkGetPhysicalDeviceProperties(device, &props);
+
+#ifndef NDEBUG
+  std::cout << "Found device [" << device << "]: " << props.deviceName << std::endl;
+#endif
+
+  VkPhysicalDeviceFeatures features;
+  vkGetPhysicalDeviceFeatures(device, &features);
+
+  // Make sure there is at least one queue that supports graphics.
+  QueueFamilyIndices indices = findGraphicsQueue(device);
+
+  // No particular features must be specified, but you could return false
+  // if a certain feature isn't supported.
+  return indices.isComplete();
+}
+
+QueueFamilyIndices Valium::impl::findGraphicsQueue(VkPhysicalDevice device) {
+  QueueFamilyIndices indices;
+  // Logic to find queue family indices to populate struct with
+  uint32_t queueFamilyCount = 0;
+  vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+  std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+  vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+
+  int i = 0;
+  for (const auto& queueFamily : queueFamilies) {
+    if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+      indices.graphicsFamily = i;
+    }
+
+    if (indices.isComplete()) {
+      break;
+    }
+
+    i++;
+  }
+  return indices;
 }
 
 #ifndef NDEBUG

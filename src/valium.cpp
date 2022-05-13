@@ -11,6 +11,7 @@
 #include "valium_queue.h"
 #include "validation_layers.h"
 #include "valium_device.h"
+#include "valium_swapchain.h"
 #include "window.h"
 
 struct Valium::impl {
@@ -247,9 +248,13 @@ bool Valium::impl::isDeviceSuitable(VkPhysicalDevice device) {
   // Make sure there is at least one queue that supports graphics.
   QueueFamilyIndices indices = ValiumQueue::GetQueueIndices(device, surface);
 
+  // Make sure the swapchain with the device and surface can be used.
+  ValiumSwapchain chain{device, surface};
+  bool isSwapchainGood = chain.SupportsDrawing();
+
   // No particular features must be specified, but you could return false
   // if a certain feature isn't supported.
-  return indices.isComplete() && supportsRequiredExtensions;
+  return indices.isComplete() && supportsRequiredExtensions && isSwapchainGood;
 }
 
 void Valium::impl::CreateSurface() {

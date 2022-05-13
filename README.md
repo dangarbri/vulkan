@@ -17,6 +17,21 @@ make
 make
 ```
 
+### Debug Flags
+
+Extra flags can be added to increase/decrease verbosity.
+Flags can be set in the environment variable CPPFLAGS.
+
+For example:
+
+```bash
+CPPFLAGS=-DSHOW_AVAILABLE_EXTENSIONS ./configure
+make
+```
+
+Available flags include:
+- SHOW_AVAILABLE_EXTENSIONS
+
 ## Running the program
 
 ```bash

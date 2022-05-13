@@ -11,32 +11,27 @@
 class HelloTriangleApplication {
 public:
   void run() {
-    initWindow();
     initVulkan();
     mainLoop();
     cleanup();
   }
 
 private:
-  Window* _window;
   Valium* _valium;
-  
-  void initWindow() {
-    // Create the window
-    _window = new Window("Vulkan");
-  }
   
   void initVulkan() {
     _valium = new Valium("Vulkan");
+#ifdef SHOW_AVAILABLE_EXTENSIONS
     std::vector<std::string> names = _valium->GetAvailableExtensions();
     std::cout << "available extensions:" << std::endl;
     for (auto name : names) {
       std::cout << "\t" << name << std::endl;
     }
+#endif
   }
 
   void mainLoop() {
-    GLFWwindow* win = _window->GetWindow();
+    GLFWwindow* win = _valium->GetWindow();
     while (!glfwWindowShouldClose(win)) {
       glfwPollEvents();
     }
@@ -44,7 +39,6 @@ private:
 
   void cleanup() {
     delete _valium;
-    delete _window;
   }
 };
 

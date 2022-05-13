@@ -18,8 +18,9 @@ public:
   /**
    * Creates a logical device to interface with the given physical @a device
    * @param[in] device Reference to the physical vulkan device
+   * @param[in] surface Surface that this device will be drawing to
    **/
-  ValiumDevice(const VkPhysicalDevice device);
+  ValiumDevice(const VkPhysicalDevice device, const VkSurfaceKHR surface);
   ~ValiumDevice();
 
 private:

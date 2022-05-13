@@ -8,6 +8,8 @@
 struct ValiumDevice::ValiumDeviceImpl {
   /** Represents the physical device for this @a ValiumDevice */
   const VkPhysicalDevice physicalDevice;
+  /** Surface that will be rendered to */
+  const VkSurfaceKHR surface;
 
   /** Logical Device to be used with the vulkan API */
   VkDevice device;
@@ -19,7 +21,7 @@ struct ValiumDevice::ValiumDeviceImpl {
   std::vector<const char*> desiredExtensions;
 
   /** Constructs and assigns the constant device */
-  ValiumDeviceImpl(const VkPhysicalDevice d) : physicalDevice(d) {}
+  ValiumDeviceImpl(const VkPhysicalDevice d, const VkSurfaceKHR surface) : physicalDevice(d), surface(surface) {}
 
   /** Creates the logical device around @a device */
   void CreateLogicalDevice();
@@ -30,8 +32,8 @@ struct ValiumDevice::ValiumDeviceImpl {
   void SetExtensions(VkDeviceCreateInfo& createInfo);
 };
 
-ValiumDevice::ValiumDevice(const VkPhysicalDevice physicalDevice) {
-  _impl = new ValiumDeviceImpl(physicalDevice);
+ValiumDevice::ValiumDevice(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) {
+  _impl = new ValiumDeviceImpl(physicalDevice, surface);
   _impl->CreateLogicalDevice();
 #ifndef NDEBUG
   std::cout << "Created logical device" << std::endl;
@@ -44,7 +46,7 @@ ValiumDevice::~ValiumDevice() {
 }
 
 void ValiumDevice::ValiumDeviceImpl::CreateLogicalDevice() {
-  QueueFamilyIndices indices = ValiumQueue::GetQueueIndices(physicalDevice);
+  QueueFamilyIndices indices = ValiumQueue::GetQueueIndices(physicalDevice, surface);
 
   VkDeviceQueueCreateInfo queueCreateInfo{};
   // Specify that we would like to use the graphics queue
@@ -89,14 +91,20 @@ void ValiumDevice::ValiumDeviceImpl::SetExtensions(VkDeviceCreateInfo &createInf
   std::vector<VkExtensionProperties> properties(numExtensions);
   vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &numExtensions, properties.data());
 
+#ifdef SHOW_AVAILABLE_EXTENSIONS
   std::cout << "Found properties: " << std::endl;
+#endif
   for (VkExtensionProperties props : properties) {
+#ifdef SHOW_AVAILABLE_EXTENSIONS
     std::cout << "\t" << props.extensionName << std::endl;
+#endif
     if (std::string(props.extensionName) == "VK_KHR_portability_subset") {
       desiredExtensions.push_back("VK_KHR_portability_subset");
       // This extension is required by portability_subset per the documentation found here:
       // https://vulkan.lunarg.com/doc/view/1.3.211.0/mac/1.3-extensions/vkspec.html#VK_KHR_portability_subset
+#ifdef SHOW_AVAILABLE_EXTENSIONS
       std::cout << "\t\t" << "Adding " << props.extensionName << " to desired extension list" << std::endl;
+#endif
     }
   }
 

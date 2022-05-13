@@ -1,7 +1,7 @@
 #include "valium_queue.h"
 #include <vector>
 
-QueueFamilyIndices ValiumQueue::GetQueueIndices(const VkPhysicalDevice device) {
+QueueFamilyIndices ValiumQueue::GetQueueIndices(const VkPhysicalDevice device, const VkSurfaceKHR surface) {
   QueueFamilyIndices indices;
   // Get the number of queues available
   uint32_t queueFamilyCount = 0;
@@ -18,7 +18,15 @@ QueueFamilyIndices ValiumQueue::GetQueueIndices(const VkPhysicalDevice device) {
       indices.graphicsFamily = i;
     }
 
-    if (indices.isComplete()) {
+    VkBool32 presentSupport = false;
+    vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+    if (presentSupport) {
+      indices.presentFamily = i;
+    }
+
+    if (surface == VK_NULL_HANDLE && indices.hasGraphics()) {
+      break;
+    } else if (indices.isComplete()) {
       break;
     }
 

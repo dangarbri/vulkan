@@ -6,12 +6,16 @@
 #include <algorithm>
 #include <cstring>
 #include <optional>
+#include <memory>
 #include "valium.h"
 #include "valium_queue.h"
 #include "validation_layers.h"
 #include "valium_device.h"
+#include "window.h"
 
 struct Valium::impl {
+  /** Name of the running app */
+  const char* app_name;
   /** Vulkan instance for use with vulkan APIs */
   VkInstance instance;
   /** Self */
@@ -20,12 +24,18 @@ struct Valium::impl {
   ValiumDevice* device = nullptr;
   /** Extensions to be requested on the instance */
   std::vector<const char*> requestedExtensions;
+  /** Surface for rendering to */
+  VkSurfaceKHR surface = VK_NULL_HANDLE;
+  /** Window and its operations */
+  std::unique_ptr<Window> window;
 
   /** Creates the vulkan instance and assigns it to instance */
   void initVulkanInstance(const char* app_name);
 
   /** Checks the vulkan API for a list of available extensions */
   std::vector<VkExtensionProperties> getVulkanExtensions();
+
+  impl(const char* name) : app_name(name) {}
 
   /**
    * @brief Applies instance extensions.
@@ -50,18 +60,30 @@ struct Valium::impl {
 
   /** Checks if a GPU is suitable for rendering */
   bool isDeviceSuitable(VkPhysicalDevice device);
+
+  /** Creates the surface and saves it to @a surface */
+  void CreateSurface();
+
+  /** Creates the window using GLFW */
+  void CreateWindow();
 };
 
 Valium::Valium(const char* app_name) {
-  _impl = new impl();
+  _impl = new impl(app_name);
   _impl->inst = this;
+  _impl->CreateWindow();
   _impl->initVulkanInstance(app_name);
+  _impl->CreateSurface();
   _impl->selectDevice();
 }
 
 Valium::~Valium() {
   if (_impl->device != nullptr) {
     delete _impl->device;
+  }
+
+  if (_impl->surface != VK_NULL_HANDLE) {
+    vkDestroySurfaceKHR(_impl->instance, _impl->surface, nullptr);
   }
   
   vkDestroyInstance(_impl->instance, nullptr);
@@ -79,6 +101,10 @@ std::vector<std::string> Valium::GetAvailableExtensions() {
   }
 
   return extension_names;
+}
+
+GLFWwindow* Valium::GetWindow() {
+  return _impl->window->GetWindow();
 }
 
 void Valium::impl::initVulkanInstance(const char* app_name) {
@@ -136,6 +162,13 @@ void Valium::impl::SetInstanceExtensions(VkInstanceCreateInfo &info) {
     requestedExtensions.push_back(glfwExtensions[i]);
   }
 
+#ifdef SHOW_AVAILABLE_EXTENSIONS
+  std::cout << "Enabling extensions." << std::endl;
+  for (auto ext : requestedExtensions) {
+    std::cout << "\t" << ext << std::endl;
+  }
+#endif
+
   info.enabledExtensionCount = requestedExtensions.size();
   info.ppEnabledExtensionNames = requestedExtensions.data();
 }
@@ -152,10 +185,14 @@ bool Valium::impl::verifyGlfwWorksWithVulkan() {
 
   // Verify that each extension exists in the vector
   for (int idx = 0; idx < glfwExtensionCount; idx++) {
+#ifdef SHOW_AVAILABLE_EXTENSIONS
     std::cout << "Checking for " << glfwExtensions[idx] << " in vulkan extensions" << std::endl;
+#endif
     auto result = std::find(extensions.begin(), extensions.end(), std::string(glfwExtensions[idx]));
     if (result == extensions.end()) {
+#ifdef SHOW_AVAILABLE_EXTENSIONS
       std::cout << "Required extension " << glfwExtensions[idx] << " is not available in vulkan" << std::endl;
+#endif
       return false;
     }
   }
@@ -194,7 +231,7 @@ void Valium::impl::selectDevice() {
   }
 
   // Now that a device has been selected, wrap it with some valium.
-  device = new ValiumDevice(selectedDevice);
+  device = new ValiumDevice(selectedDevice, surface);
 }
 
 bool Valium::impl::isDeviceSuitable(VkPhysicalDevice device) {
@@ -209,9 +246,19 @@ bool Valium::impl::isDeviceSuitable(VkPhysicalDevice device) {
   vkGetPhysicalDeviceFeatures(device, &features);
 
   // Make sure there is at least one queue that supports graphics.
-  QueueFamilyIndices indices = ValiumQueue::GetQueueIndices(device);
+  QueueFamilyIndices indices = ValiumQueue::GetQueueIndices(device, surface);
 
   // No particular features must be specified, but you could return false
   // if a certain feature isn't supported.
   return indices.isComplete();
+}
+
+void Valium::impl::CreateSurface() {
+  if (glfwCreateWindowSurface(instance, window->GetWindow(), nullptr, &surface) != VK_SUCCESS) {
+    throw std::runtime_error("failed to create window surface!");
+  }
+}
+
+void Valium::impl::CreateWindow() {
+  window = std::unique_ptr<Window>(new Window(app_name));
 }

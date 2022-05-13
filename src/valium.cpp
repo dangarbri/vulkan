@@ -235,22 +235,21 @@ void Valium::impl::selectDevice() {
 }
 
 bool Valium::impl::isDeviceSuitable(VkPhysicalDevice device) {
+#ifndef NDEBUG
   VkPhysicalDeviceProperties props;
   vkGetPhysicalDeviceProperties(device, &props);
 
-#ifndef NDEBUG
   std::cout << "Found device [" << device << "]: " << props.deviceName << std::endl;
 #endif
 
-  VkPhysicalDeviceFeatures features;
-  vkGetPhysicalDeviceFeatures(device, &features);
+  bool supportsRequiredExtensions = ValiumDevice::SupportsRequiredExtensions(device);
 
   // Make sure there is at least one queue that supports graphics.
   QueueFamilyIndices indices = ValiumQueue::GetQueueIndices(device, surface);
 
   // No particular features must be specified, but you could return false
   // if a certain feature isn't supported.
-  return indices.isComplete();
+  return indices.isComplete() && supportsRequiredExtensions;
 }
 
 void Valium::impl::CreateSurface() {

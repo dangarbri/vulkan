@@ -23,6 +23,14 @@ public:
   ValiumDevice(const VkPhysicalDevice device, const VkSurfaceKHR surface);
   ~ValiumDevice();
 
+  /**
+   * Checks if the device supports the default required extensions
+   * for use with valium
+   *
+   * @param[in] device The device to check support on.
+   */
+  static bool SupportsRequiredExtensions(VkPhysicalDevice device);
+
 private:
   struct ValiumDeviceImpl;
   ValiumDeviceImpl* _impl;

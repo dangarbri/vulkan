@@ -6,6 +6,10 @@
 #include <string>
 #include <set>
 
+const std::vector<const char*> requiredDeviceExtensions = {
+  VK_KHR_SWAPCHAIN_EXTENSION_NAME
+};
+
 /**
  * Private functions for ValiumDevice
  */
@@ -63,6 +67,30 @@ ValiumDevice::ValiumDevice(const VkPhysicalDevice physicalDevice, const VkSurfac
 ValiumDevice::~ValiumDevice() {
   vkDestroyDevice(_impl->device, nullptr);
   delete _impl;
+}
+
+// static
+bool ValiumDevice::SupportsRequiredExtensions(VkPhysicalDevice device) {
+  // Get number of extensions
+  uint32_t extensionCount;
+  vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
+
+  std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+  vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
+
+  // Get a set of the required extensions
+  std::set<std::string> requiredExtensions(requiredDeviceExtensions.begin(), requiredDeviceExtensions.end());
+
+  // Iterate over available extensions, if we find a required extension,
+  // them remove it from the set.
+  for (const auto& extension : availableExtensions) {
+    requiredExtensions.erase(extension.extensionName);
+  }
+
+  // If there are any requiredExtensions left, then it indicates an extension
+  // was missing from the available extensions. So an empty list means
+  // all of them are available
+  return requiredExtensions.empty();
 }
 
 void ValiumDevice::ValiumDeviceImpl::CreateLogicalDevice() {
@@ -124,6 +152,11 @@ void ValiumDevice::ValiumDeviceImpl::SetExtensions(VkDeviceCreateInfo &createInf
       std::cout << "\t\t" << "Adding " << props.extensionName << " to desired extension list" << std::endl;
 #endif
     }
+  }
+
+  // Add the required extensions to the list
+  for (auto ext : requiredDeviceExtensions) {
+    desiredExtensions.push_back(ext);
   }
 
   std::cout << "Requested extensions: " << std::endl;

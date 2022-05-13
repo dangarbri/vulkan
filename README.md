@@ -30,7 +30,8 @@ make
 ```
 
 Available flags include:
-- SHOW_AVAILABLE_EXTENSIONS
+- SHOW\_AVAILABLE\_EXTENSIONS - Print queried device extensions to stdout
+- SHOW\_QUEUE\_CREATION - Print queues requested on the device to stdout
 
 ## Running the program
 

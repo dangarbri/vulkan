@@ -1,6 +1,7 @@
 #include "valium_device.h"
 #include "valium_queue.h"
 #include "validation_layers.h"
+#include "valium_swapchain.h"
 #include <vector>
 #include <iostream>
 #include <string>
@@ -25,6 +26,9 @@ struct ValiumDevice::ValiumDeviceImpl {
   /** Queue descriptor for interfacing with the GPU's command queue */
   VkQueue graphicsQueue;
 
+  /** Swapchain created for this device */
+  ValiumSwapchain* swapchain = nullptr;
+
   /**
    * @brief Queue that manages rendering contents to the window.
    * Initialized with CreateLogicalDevice()
@@ -46,6 +50,12 @@ struct ValiumDevice::ValiumDeviceImpl {
   void SetExtensions(VkDeviceCreateInfo& createInfo);
 
   /**
+   * Creates the swapchain for this device.
+   * @note Must be called after CreateLogicalDevice().
+   */
+  void CreateSwapchain();
+
+  /**
    * Initializes ValiumDeviceImpl::presentQueue.
    * Called by CreateLogicalDevice()
    *
@@ -59,12 +69,14 @@ struct ValiumDevice::ValiumDeviceImpl {
 ValiumDevice::ValiumDevice(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) {
   _impl = new ValiumDeviceImpl(physicalDevice, surface);
   _impl->CreateLogicalDevice();
+  _impl->CreateSwapchain();
 #ifndef NDEBUG
   std::cout << "Created logical device" << std::endl;
 #endif
 }
 
 ValiumDevice::~ValiumDevice() {
+  delete _impl->swapchain;
   vkDestroyDevice(_impl->device, nullptr);
   delete _impl;
 }
@@ -189,4 +201,12 @@ void ValiumDevice::ValiumDeviceImpl::GetDesiredQueues(QueueFamilyIndices indices
     createInfo.pQueuePriorities = priority;
     desiredQueues.push_back(createInfo);
   }
+}
+
+void ValiumDevice::ValiumDeviceImpl::CreateSwapchain() {
+  swapchain = new ValiumSwapchain(physicalDevice, surface, device);
+}
+
+void ValiumDevice::InitializeSwapchain(uint32_t width, uint32_t height) {
+  _impl->swapchain->InitializeSwapchain(width, height);
 }

@@ -24,6 +24,14 @@ public:
   ~ValiumDevice();
 
   /**
+   * Extra step required to fully initialize the device for drawing
+   *
+   * @param[in] width Window width
+   * @param[in] height Window height
+   */
+  void InitializeSwapchain(uint32_t width, uint32_t height);
+
+  /**
    * Checks if the device supports the default required extensions
    * for use with valium
    *

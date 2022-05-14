@@ -1,6 +1,7 @@
 #include "valium_swapchain.h"
 #include "valium_queue.h"
 #include <iostream>
+#include <algorithm>
 
 /**
  * Queries for available presentation modes
@@ -35,8 +36,17 @@ struct ValiumSwapchain::ValiumSwapchainImpl {
   /** Indices to pass through to the swapchain */
   uint32_t queueFamilyIndices[2];
 
+  /** Holds handles to images in the swapChain */
+  std::vector<VkImage> swapChainImages;
+
   /** The swapchain created by ValiumSwapchain::InitializeSwapchain() */
   VkSwapchainKHR swapChain = VK_NULL_HANDLE;
+
+  /** Swapchain's extent, saved when swapchain is created with InitializeSwapchain() */
+  VkExtent2D extent;
+
+  /** Format for images stored on the swapchain. */
+  VkFormat imageFormat = VK_FORMAT_B8G8R8A8_SRGB;
 
   ValiumSwapchainImpl(VkPhysicalDevice device, VkSurfaceKHR surface, VkDevice logicalDevice) : device{device}, surface{surface}, logicalDevice(logicalDevice) {}
 
@@ -60,6 +70,14 @@ struct ValiumSwapchain::ValiumSwapchainImpl {
    * @param[out] createInfo Swapchain creation struct to set imageSharingMode values into.
    */
   void SetImageSharingMode(VkSwapchainCreateInfoKHR &createInfo);
+
+  /**
+   * Gets image handles from the swapchain after its creation.
+   * @note Call after InitializeSwapchain()
+   *
+   * Initializes swapChainImages;
+   */
+  void LoadImageHandles();
 };
 
 
@@ -162,6 +180,7 @@ void ValiumSwapchain::InitializeSwapchain(uint32_t width, uint32_t height) {
   
   VkExtent2D extent = _impl->GetExtent(width, height);
   createInfo.imageExtent = extent;
+  _impl->extent = extent;
   createInfo.imageArrayLayers = 1;
   createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
@@ -181,6 +200,7 @@ void ValiumSwapchain::InitializeSwapchain(uint32_t width, uint32_t height) {
   if (vkCreateSwapchainKHR(_impl->logicalDevice, &createInfo, nullptr, &_impl->swapChain) != VK_SUCCESS) {
     throw std::runtime_error("failed to create swap chain!");
   }
+  _impl->LoadImageHandles();
 }
 
 void ValiumSwapchain::ValiumSwapchainImpl::SetImageSharingMode(VkSwapchainCreateInfoKHR &createInfo) {
@@ -208,4 +228,11 @@ uint32_t ValiumSwapchain::ValiumSwapchainImpl::GetSwapchainImageCount() {
   }
 
   return imageCount;
+}
+
+void ValiumSwapchain::ValiumSwapchainImpl::LoadImageHandles() {
+  uint32_t imageCount;
+  vkGetSwapchainImagesKHR(device, swapChain, &imageCount, nullptr);
+  swapChainImages.resize(imageCount);
+  vkGetSwapchainImagesKHR(device, swapChain, &imageCount, swapChainImages.data());
 }

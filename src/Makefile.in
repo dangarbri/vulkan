@@ -103,7 +103,7 @@ am_vulkan_OBJECTS = vulkan-main.$(OBJEXT) vulkan-window.$(OBJEXT) \
 	vulkan-valium.$(OBJEXT) vulkan-valium_queue.$(OBJEXT) \
 	vulkan-validation_layers.$(OBJEXT) \
 	vulkan-valium_device.$(OBJEXT) \
-	vulkan-valium_swapchain.$(OBJEXT)
+	vulkan-valium_swapchain.$(OBJEXT) vulkan-valium_view.$(OBJEXT)
 vulkan_OBJECTS = $(am_vulkan_OBJECTS)
 vulkan_LDADD = $(LDADD)
 vulkan_LINK = $(CXXLD) $(vulkan_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
@@ -129,7 +129,7 @@ am__depfiles_remade = ./$(DEPDIR)/vulkan-main.Po \
 	./$(DEPDIR)/vulkan-valium_device.Po \
 	./$(DEPDIR)/vulkan-valium_queue.Po \
 	./$(DEPDIR)/vulkan-valium_swapchain.Po \
-	./$(DEPDIR)/vulkan-window.Po
+	./$(DEPDIR)/vulkan-valium_view.Po ./$(DEPDIR)/vulkan-window.Po
 am__mv = mv -f
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -266,7 +266,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-vulkan_SOURCES = main.cpp window.cpp valium.cpp valium_queue.cpp validation_layers.cpp valium_device.cpp valium_swapchain.cpp
+vulkan_SOURCES = main.cpp window.cpp valium.cpp valium_queue.cpp validation_layers.cpp valium_device.cpp valium_swapchain.cpp valium_view.cpp
 vulkan_CXXFLAGS = -std=c++17
 all: all-am
 
@@ -360,6 +360,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-valium_device.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-valium_queue.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-valium_swapchain.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-valium_view.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-window.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
@@ -479,6 +480,20 @@ vulkan-valium_swapchain.obj: valium_swapchain.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='valium_swapchain.cpp' object='vulkan-valium_swapchain.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -c -o vulkan-valium_swapchain.obj `if test -f 'valium_swapchain.cpp'; then $(CYGPATH_W) 'valium_swapchain.cpp'; else $(CYGPATH_W) '$(srcdir)/valium_swapchain.cpp'; fi`
+
+vulkan-valium_view.o: valium_view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -MT vulkan-valium_view.o -MD -MP -MF $(DEPDIR)/vulkan-valium_view.Tpo -c -o vulkan-valium_view.o `test -f 'valium_view.cpp' || echo '$(srcdir)/'`valium_view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vulkan-valium_view.Tpo $(DEPDIR)/vulkan-valium_view.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='valium_view.cpp' object='vulkan-valium_view.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -c -o vulkan-valium_view.o `test -f 'valium_view.cpp' || echo '$(srcdir)/'`valium_view.cpp
+
+vulkan-valium_view.obj: valium_view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -MT vulkan-valium_view.obj -MD -MP -MF $(DEPDIR)/vulkan-valium_view.Tpo -c -o vulkan-valium_view.obj `if test -f 'valium_view.cpp'; then $(CYGPATH_W) 'valium_view.cpp'; else $(CYGPATH_W) '$(srcdir)/valium_view.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vulkan-valium_view.Tpo $(DEPDIR)/vulkan-valium_view.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='valium_view.cpp' object='vulkan-valium_view.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -c -o vulkan-valium_view.obj `if test -f 'valium_view.cpp'; then $(CYGPATH_W) 'valium_view.cpp'; else $(CYGPATH_W) '$(srcdir)/valium_view.cpp'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -612,6 +627,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/vulkan-valium_device.Po
 	-rm -f ./$(DEPDIR)/vulkan-valium_queue.Po
 	-rm -f ./$(DEPDIR)/vulkan-valium_swapchain.Po
+	-rm -f ./$(DEPDIR)/vulkan-valium_view.Po
 	-rm -f ./$(DEPDIR)/vulkan-window.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
@@ -664,6 +680,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/vulkan-valium_device.Po
 	-rm -f ./$(DEPDIR)/vulkan-valium_queue.Po
 	-rm -f ./$(DEPDIR)/vulkan-valium_swapchain.Po
+	-rm -f ./$(DEPDIR)/vulkan-valium_view.Po
 	-rm -f ./$(DEPDIR)/vulkan-window.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic

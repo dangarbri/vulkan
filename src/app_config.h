@@ -3,7 +3,12 @@
 
 #include <cstdlib>
 
-const uint32_t WIDTH = 800;
-const uint32_t HEIGHT = 600;
+/** Desired window width */
+#define WIDTH 800
+/** Desired window height */
+#define HEIGHT 600
+
+/** Image format used in the swapchain and image views */
+#define IMAGE_FORMAT VK_FORMAT_B8G8R8A8_SRGB
 
 #endif

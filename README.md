@@ -32,6 +32,7 @@ make
 Available flags include:
 - SHOW\_AVAILABLE\_EXTENSIONS - Print queried device extensions to stdout
 - SHOW\_QUEUE\_CREATION - Print queues requested on the device to stdout
+- SHOW\_RESOURCE\_ALLOCATION - Prints all create/destroy calls to stdout
 
 ## Running the program
 

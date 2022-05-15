@@ -1,7 +1,9 @@
 #include "valium_swapchain.h"
 #include "valium_queue.h"
+#include "valium_view.h"
 #include <iostream>
 #include <algorithm>
+#include <memory>
 
 /**
  * Queries for available presentation modes
@@ -38,6 +40,9 @@ struct ValiumSwapchain::ValiumSwapchainImpl {
 
   /** Holds handles to images in the swapChain */
   std::vector<VkImage> swapChainImages;
+
+  /** Holds handles to image views in the swapchain */
+  std::vector<std::unique_ptr<ValiumView>> views;
 
   /** The swapchain created by ValiumSwapchain::InitializeSwapchain() */
   VkSwapchainKHR swapChain = VK_NULL_HANDLE;
@@ -232,7 +237,12 @@ uint32_t ValiumSwapchain::ValiumSwapchainImpl::GetSwapchainImageCount() {
 
 void ValiumSwapchain::ValiumSwapchainImpl::LoadImageHandles() {
   uint32_t imageCount;
-  vkGetSwapchainImagesKHR(device, swapChain, &imageCount, nullptr);
+  vkGetSwapchainImagesKHR(logicalDevice, swapChain, &imageCount, nullptr);
   swapChainImages.resize(imageCount);
-  vkGetSwapchainImagesKHR(device, swapChain, &imageCount, swapChainImages.data());
+  vkGetSwapchainImagesKHR(logicalDevice, swapChain, &imageCount, swapChainImages.data());
+
+  // Resize the views vector to fit the number of views needed
+  for (size_t i = 0; i < swapChainImages.size(); i++) {
+    views.push_back(std::unique_ptr<ValiumView>(new ValiumView(logicalDevice, swapChainImages[i])));
+  }
 }

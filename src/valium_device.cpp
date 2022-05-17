@@ -2,6 +2,7 @@
 #include "valium_queue.h"
 #include "validation_layers.h"
 #include "valium_swapchain.h"
+#include "valium_graphics.h"
 #include <vector>
 #include <iostream>
 #include <string>
@@ -35,6 +36,8 @@ struct ValiumDevice::ValiumDeviceImpl {
    */
   VkQueue presentQueue;
 
+  ValiumGraphics* pipeline;
+
   /** Extensions to enable on the device */
   std::vector<const char*> desiredExtensions;
 
@@ -64,18 +67,25 @@ struct ValiumDevice::ValiumDeviceImpl {
    * @param[in] priority Priority to use for all queues
    */
   void GetDesiredQueues(QueueFamilyIndices indices, std::vector<VkDeviceQueueCreateInfo> &queues, float* priority);
+
+  /**
+   * Creates the graphics pipeline on the device for managing shaders
+   */
+  void CreateGraphicsPipeline();
 };
 
 ValiumDevice::ValiumDevice(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) {
   _impl = new ValiumDeviceImpl(physicalDevice, surface);
   _impl->CreateLogicalDevice();
   _impl->CreateSwapchain();
+  _impl->CreateGraphicsPipeline();
 #ifndef NDEBUG
   std::cout << "Created logical device" << std::endl;
 #endif
 }
 
 ValiumDevice::~ValiumDevice() {
+  delete _impl->pipeline;
   delete _impl->swapchain;
   vkDestroyDevice(_impl->device, nullptr);
   delete _impl;
@@ -209,4 +219,8 @@ void ValiumDevice::ValiumDeviceImpl::CreateSwapchain() {
 
 void ValiumDevice::InitializeSwapchain(uint32_t width, uint32_t height) {
   _impl->swapchain->InitializeSwapchain(width, height);
+}
+
+void ValiumDevice::ValiumDeviceImpl::CreateGraphicsPipeline() {
+  pipeline = new ValiumGraphics(device);
 }

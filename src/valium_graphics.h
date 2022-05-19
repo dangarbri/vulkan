@@ -22,7 +22,7 @@ class ValiumGraphics
    *
    * @param[in] shader Path to the compiled shader
    */
-  void LoadShader(const std::string& shader);
+  void LoadShader(const std::string& shader, VkShaderStageFlagBits type);
  private:
   struct impl;
   impl* _impl;

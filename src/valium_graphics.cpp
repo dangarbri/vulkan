@@ -2,6 +2,22 @@
 #include <fstream>
 #include <vector>
 
+/**
+ * Encapsulates shader information needed for using a shader
+ * in the graphics pipeline
+ */
+struct ShaderInfo {
+  /**
+   * Compiled and loaded vertex or fragment shader
+   */
+  VkShaderModule shader;
+
+  /**
+   * Information for using the shader in the graphics pipeline
+   */
+  VkPipelineShaderStageCreateInfo createInfo;
+};
+
 struct ValiumGraphics::impl {
   /**
    * Handle to the current device
@@ -11,7 +27,7 @@ struct ValiumGraphics::impl {
   /**
    * Holds the shader module that will execute our shaders
    */
-  std::vector<VkShaderModule> _shaders;
+  std::vector<ShaderInfo> _shaders;
 
   /**
    * Reads a binary file into a char buffer
@@ -25,7 +41,15 @@ struct ValiumGraphics::impl {
    *
    * @param[in] shader path to SPIR-V compiled shader
    */
-  void _LoadShader(const std::string& shader);
+  void _LoadShader(const std::string& shader, VkShaderStageFlagBits type);
+
+  /**
+   * Loads a shader module into the graphics pipeline
+   *
+   * @param[in] shader The shader being loaded
+   * @param[in] type Specifies if this is a vertex or fragment shader
+   */
+  VkPipelineShaderStageCreateInfo _CreateShaderPipelineInfo(VkShaderModule shader, VkShaderStageFlagBits type);
 
   /**
    * Initializes the graphics shader module in the given device
@@ -42,18 +66,18 @@ ValiumGraphics::ValiumGraphics(VkDevice device) {
 
 ValiumGraphics::~ValiumGraphics() {
   // Destroy the loaded shaders
-  for (auto shader : _impl->_shaders) {
-    vkDestroyShaderModule(_impl->_device, shader, nullptr);
+  for (auto shaderInfo : _impl->_shaders) {
+    vkDestroyShaderModule(_impl->_device, shaderInfo.shader, nullptr);
   }
 
   delete _impl;
 }
 
-void ValiumGraphics::LoadShader(const std::string &shader) {
-  _impl->_LoadShader(shader);
+void ValiumGraphics::LoadShader(const std::string &shader, const VkShaderStageFlagBits type) {
+  _impl->_LoadShader(shader, type);
 }
 
-void ValiumGraphics::impl::_LoadShader(const std::string& shader) {
+void ValiumGraphics::impl::_LoadShader(const std::string& shader, VkShaderStageFlagBits type) {
   // Get the file as a byte buffer
   std::vector<char> code = _ReadFile(shader);
 
@@ -69,8 +93,13 @@ void ValiumGraphics::impl::_LoadShader(const std::string& shader) {
     throw std::runtime_error("failed to create shader module!");
   }
 
-  // Push the shader into the pipeline storage
-  _shaders.push_back(shaderModule);
+  auto info = _CreateShaderPipelineInfo(shaderModule, type);
+  // Push the shader into stored memory
+  ShaderInfo newShader;
+  newShader.shader = shaderModule;
+  newShader.createInfo = info;
+
+  _shaders.push_back(newShader);
 }
 
 std::vector<char> ValiumGraphics::impl::_ReadFile(const std::string& filename) {
@@ -88,4 +117,16 @@ std::vector<char> ValiumGraphics::impl::_ReadFile(const std::string& filename) {
   file.close();
 
   return buffer;
+}
+
+VkPipelineShaderStageCreateInfo ValiumGraphics::impl::_CreateShaderPipelineInfo(VkShaderModule shader, VkShaderStageFlagBits type) {
+  VkPipelineShaderStageCreateInfo createInfo{};
+  createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+  createInfo.stage = type;
+
+
+  createInfo.module = shader;
+  createInfo.pName = "main";
+
+  return createInfo;
 }

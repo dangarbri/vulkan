@@ -1,4 +1,5 @@
 #include "valium_graphics.h"
+#include "valium_fixed_functions.h"
 #include <fstream>
 #include <vector>
 

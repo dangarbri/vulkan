@@ -9,8 +9,10 @@
  * as needed.
  *
  * Since Vulkan is a low level API, this homebrewed library is meant to
- * encapsulate working
- * with the API.
+ * encapsulate working with the API.
+ *
+ * Currently there is no overall design planned, but for the front end
+ * I'm aiming for an SDL style interface.
  */
 
 #include <memory>

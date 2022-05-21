@@ -51,6 +51,21 @@ namespace ValiumFixedFnInfo {
   };
 
   /**
+   * Default parameters for disabling multisampling
+   * @TODO This requires a GPU feature to enable. May be good to find the feature
+   *       and enable it if it's available.
+   */
+  const VkPipelineMultisampleStateCreateInfo MULTISAMPLING_INFO {
+    .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+    .sampleShadingEnable = VK_FALSE,
+    .rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
+    .minSampleShading = 1.0f, // Optional
+    .pSampleMask = nullptr, // Optional
+    .alphaToCoverageEnable = VK_FALSE, // Optional
+    .alphaToOneEnable = VK_FALSE  // Optional
+  };
+
+  /**
    * Creates a VkViewport with the given width/height parameters
    *
    * @param[in] width Desired viewport width in pixels

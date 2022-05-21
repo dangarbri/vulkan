@@ -66,6 +66,35 @@ namespace ValiumFixedFnInfo {
   };
 
   /**
+   * Defines how colors should be blended in the framebuffer
+   */
+  const VkPipelineColorBlendAttachmentState COLOR_BLENDING_INFO {
+    .colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT,
+    .blendEnable = VK_FALSE,
+    .srcColorBlendFactor = VK_BLEND_FACTOR_ONE, // Optional
+    .dstColorBlendFactor = VK_BLEND_FACTOR_ZERO, // Optional
+    .colorBlendOp = VK_BLEND_OP_ADD, // Optional
+    .srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE, // Optional
+    .dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO, // Optional
+    .alphaBlendOp = VK_BLEND_OP_ADD  // Optional
+  };
+
+  /**
+   * Optional color blending function using bitwise operators
+   */
+  const VkPipelineColorBlendStateCreateInfo BITWISE_COLOR_BLEND_INFO {
+    .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+    .logicOpEnable = VK_FALSE,
+    .logicOp = VK_LOGIC_OP_COPY, // Optional
+    .attachmentCount = 1,
+    .pAttachments = &COLOR_BLENDING_INFO,
+    .blendConstants[0] = 0.0f, // Optional
+    .blendConstants[1] = 0.0f, // Optional
+    .blendConstants[2] = 0.0f, // Optional
+    .blendConstants[3] = 0.0f  // Optional
+  };
+
+  /**
    * Creates a VkViewport with the given width/height parameters
    *
    * @param[in] width Desired viewport width in pixels

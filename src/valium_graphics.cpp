@@ -31,6 +31,11 @@ struct ValiumGraphics::impl {
   std::vector<ShaderInfo> _shaders;
 
   /**
+   * Pipeline layout used for specifying uniform values in the pipeline
+   */
+  VkPipelineLayout _pipelineLayout = VK_NULL_HANDLE;
+
+  /**
    * Reads a binary file into a char buffer
    *
    * @param[in] filename Path to the file to read
@@ -53,22 +58,25 @@ struct ValiumGraphics::impl {
   VkPipelineShaderStageCreateInfo _CreateShaderPipelineInfo(VkShaderModule shader, VkShaderStageFlagBits type);
 
   /**
-   * Initializes the graphics shader module in the given device
-   *
-   * @param[in] device Vulkan device
+   * Creates the pipelineLayout info
    */
-  void _InitializeShaderModule(VkDevice device);
+  void _CreatePipelineLayout();
 };
 
 ValiumGraphics::ValiumGraphics(VkDevice device) {
   _impl = new impl();
   _impl->_device = device;
+  _impl->_CreatePipelineLayout();
 }
 
 ValiumGraphics::~ValiumGraphics() {
   // Destroy the loaded shaders
   for (auto shaderInfo : _impl->_shaders) {
     vkDestroyShaderModule(_impl->_device, shaderInfo.shader, nullptr);
+  }
+
+  if (_impl->_pipelineLayout != VK_NULL_HANDLE) {
+    vkDestroyPipelineLayout(_impl->_device, _impl->_pipelineLayout, nullptr);
   }
 
   delete _impl;
@@ -130,4 +138,17 @@ VkPipelineShaderStageCreateInfo ValiumGraphics::impl::_CreateShaderPipelineInfo(
   createInfo.pName = "main";
 
   return createInfo;
+}
+
+void ValiumGraphics::impl::_CreatePipelineLayout() {
+  VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+  pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+  pipelineLayoutInfo.setLayoutCount = 0; // Optional
+  pipelineLayoutInfo.pSetLayouts = nullptr; // Optional
+  pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
+  pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
+
+  if (vkCreatePipelineLayout(_device, &pipelineLayoutInfo, nullptr, &_pipelineLayout) != VK_SUCCESS) {
+    throw std::runtime_error("failed to create pipeline layout!");
+  }
 }

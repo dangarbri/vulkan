@@ -44,6 +44,9 @@ struct ValiumSwapchain::ValiumSwapchainImpl {
   /** Holds handles to image views in the swapchain */
   std::vector<std::unique_ptr<ValiumView>> views;
 
+  /** The framebuffers used for rendering the swapchain */
+  std::vector<VkFramebuffer> frameBuffers;
+
   /** The swapchain created by ValiumSwapchain::InitializeSwapchain() */
   VkSwapchainKHR swapChain = VK_NULL_HANDLE;
 
@@ -83,6 +86,13 @@ struct ValiumSwapchain::ValiumSwapchainImpl {
    * Initializes swapChainImages;
    */
   void LoadImageHandles();
+
+  /**
+   * Initializes the framebuffers for rendering
+   *
+   * @param[in] renderPass Renderpass object to attach this framebuffer to
+   */
+  void InitializeFramebuffers(const ValiumRenderPass* renderPass);
 };
 
 
@@ -153,6 +163,13 @@ ValiumSwapchain::ValiumSwapchain(VkPhysicalDevice device, VkSurfaceKHR surface, 
 }
 
 ValiumSwapchain::~ValiumSwapchain() {
+  for (auto buf : _impl->frameBuffers) {
+#ifdef SHOW_RESOURCE_ALLOCATION
+    std::cout << "Destroying framebuffer" << std::endl;
+#endif
+    vkDestroyFramebuffer(_impl->logicalDevice, buf, nullptr);
+  }
+
   if (_impl->swapChain != VK_NULL_HANDLE) {
     std::cout << "Destroying the swapchain." << std::endl;
     vkDestroySwapchainKHR(_impl->logicalDevice, _impl->swapChain, nullptr);
@@ -249,4 +266,34 @@ void ValiumSwapchain::ValiumSwapchainImpl::LoadImageHandles() {
 
 VkExtent2D ValiumSwapchain::GetExtent() {
   return _impl->extent;
+}
+
+void ValiumSwapchain::InitializeFramebuffers(const ValiumRenderPass* renderPass) {
+  _impl->InitializeFramebuffers(renderPass);
+}
+
+void ValiumSwapchain::ValiumSwapchainImpl::InitializeFramebuffers(const ValiumRenderPass* renderPass) {
+  frameBuffers.resize(views.size());
+
+  for (size_t i = 0; i < views.size(); i++) {
+    VkImageView attachments[] = {
+      views[i]->GetVkImageView()
+    };
+
+    VkFramebufferCreateInfo framebufferInfo{};
+    framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+    framebufferInfo.renderPass = renderPass->GetVkRenderPass();
+    framebufferInfo.attachmentCount = 1;
+    framebufferInfo.pAttachments = attachments;
+    framebufferInfo.width = extent.width;
+    framebufferInfo.height = extent.height;
+    framebufferInfo.layers = 1;
+
+#ifdef SHOW_RESOURCE_ALLOCATION
+    std::cout << "Creating framebuffer" << std::endl;
+#endif
+    if (vkCreateFramebuffer(logicalDevice, &framebufferInfo, nullptr, &frameBuffers[i]) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create framebuffer!");
+    }
+  }
 }

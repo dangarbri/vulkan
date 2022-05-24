@@ -236,3 +236,7 @@ void ValiumGraphics::impl::_CreateGraphicsPipeline(VkExtent2D extent) {
 void ValiumGraphics::InitializePipeline() {
   _impl->_CreateGraphicsPipeline(_impl->_extent);
 }
+
+ValiumRenderPass* ValiumGraphics::GetRenderPass() {
+  return _impl->_renderPass;
+}

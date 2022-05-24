@@ -65,6 +65,6 @@ void ValiumRenderPass::impl::_CreateRenderPass() {
   }
 }
 
-VkRenderPass ValiumRenderPass::GetVkRenderPass() {
+VkRenderPass ValiumRenderPass::GetVkRenderPass() const {
   return _impl->_renderPass;
 }

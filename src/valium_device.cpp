@@ -81,6 +81,7 @@ ValiumDevice::ValiumDevice(const VkPhysicalDevice physicalDevice, const VkSurfac
   _impl->CreateLogicalDevice();
   _impl->CreateSwapchain(width, height);
   _impl->CreateGraphicsPipeline();
+  _impl->swapchain->InitializeFramebuffers(_impl->pipeline->GetRenderPass());
 #ifndef NDEBUG
   std::cout << "Created logical device" << std::endl;
 #endif

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "valium_renderpass.h"
 #include <vulkan/vulkan.h>
 #include <string>
 
@@ -29,6 +30,11 @@ class ValiumGraphics
    * Create the graphics pipeline, do this after loading shaders
    */
   void InitializePipeline();
+
+  /**
+   * Returns the generated renderpass for this pipeline
+   */
+  ValiumRenderPass* GetRenderPass();
 
  private:
   struct impl;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "valium_renderpass.h"
 #include <vulkan/vulkan.h>
 #include <vector>
 
@@ -40,6 +41,11 @@ class ValiumSwapchain
    * @returns true if there is at least one presentation mode and surface format.
    */
   static bool SupportsDrawing(VkPhysicalDevice device, VkSurfaceKHR surface);
+
+  /**
+   * Initializes the framebuffers for the given renderpass
+   */
+  void InitializeFramebuffers(const ValiumRenderPass* renderPass);
 
   /**
    * Initializes the swapchain with the given resolution

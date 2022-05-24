@@ -72,3 +72,7 @@ void ValiumView::impl::_CreateImageView() {
     throw std::runtime_error("failed to create image views!");
   }
 }
+
+VkImageView ValiumView::GetVkImageView() {
+  return _impl->_imageView;
+}

@@ -51,7 +51,7 @@ struct ValiumSwapchain::ValiumSwapchainImpl {
   VkExtent2D extent;
 
   /** Format for images stored on the swapchain. */
-  VkFormat imageFormat = VK_FORMAT_B8G8R8A8_SRGB;
+  VkFormat imageFormat = SWAPCHAIN_IMAGE_FORMAT;
 
   ValiumSwapchainImpl(VkPhysicalDevice device, VkSurfaceKHR surface, VkDevice logicalDevice) : device{device}, surface{surface}, logicalDevice(logicalDevice) {}
 
@@ -245,4 +245,8 @@ void ValiumSwapchain::ValiumSwapchainImpl::LoadImageHandles() {
   for (size_t i = 0; i < swapChainImages.size(); i++) {
     views.push_back(std::unique_ptr<ValiumView>(new ValiumView(logicalDevice, swapChainImages[i])));
   }
+}
+
+VkExtent2D ValiumSwapchain::GetExtent() {
+  return _impl->extent;
 }

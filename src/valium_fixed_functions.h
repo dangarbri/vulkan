@@ -68,7 +68,7 @@ namespace ValiumFixedFnInfo {
   /**
    * Defines how colors should be blended in the framebuffer
    */
-  const VkPipelineColorBlendAttachmentState COLOR_BLENDING_INFO {
+  const VkPipelineColorBlendAttachmentState COLOR_BLEND_ATTACH_INFO {
     .colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT,
     .blendEnable = VK_FALSE,
     .srcColorBlendFactor = VK_BLEND_FACTOR_ONE, // Optional
@@ -80,14 +80,14 @@ namespace ValiumFixedFnInfo {
   };
 
   /**
-   * Optional color blending function using bitwise operators
+   * Color blending creation info
    */
-  const VkPipelineColorBlendStateCreateInfo BITWISE_COLOR_BLEND_INFO {
+  const VkPipelineColorBlendStateCreateInfo COLOR_BLEND_INFO {
     .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
     .logicOpEnable = VK_FALSE,
     .logicOp = VK_LOGIC_OP_COPY, // Optional
     .attachmentCount = 1,
-    .pAttachments = &COLOR_BLENDING_INFO,
+    .pAttachments = &COLOR_BLEND_ATTACH_INFO,
     .blendConstants[0] = 0.0f, // Optional
     .blendConstants[1] = 0.0f, // Optional
     .blendConstants[2] = 0.0f, // Optional
@@ -110,4 +110,12 @@ namespace ValiumFixedFnInfo {
    * @returns VkRect2D
    */
   VkRect2D GetScissor(VkExtent2D swapchainExtent);
+
+  /**
+   * Constructs and returns information used for creating a viewport state
+   *
+   * @param[in] viewport A viewport created with GetViewport()
+   * @param[in] scissor A scissor created with GetScissor()
+   */
+  VkPipelineViewportStateCreateInfo GetViewportStateCreateInfo(VkViewport &viewport, VkRect2D &scissor);
 };

@@ -3,6 +3,8 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 
+const VkFormat SWAPCHAIN_IMAGE_FORMAT = VK_FORMAT_B8G8R8A8_SRGB;
+
 /**
  * Can be used to gather information about a swapchain and specify
  * swapchain details.
@@ -46,6 +48,11 @@ class ValiumSwapchain
    * @param[in] height Window height
    */
   void InitializeSwapchain(uint32_t width, uint32_t height);
+
+  /**
+   * @returns the swapchain image's extent
+   */
+  VkExtent2D GetExtent();
  private:
   struct ValiumSwapchainImpl;
   ValiumSwapchainImpl* _impl;

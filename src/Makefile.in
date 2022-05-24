@@ -105,7 +105,8 @@ am_vulkan_OBJECTS = vulkan-main.$(OBJEXT) vulkan-window.$(OBJEXT) \
 	vulkan-valium_device.$(OBJEXT) \
 	vulkan-valium_swapchain.$(OBJEXT) vulkan-valium_view.$(OBJEXT) \
 	vulkan-valium_graphics.$(OBJEXT) \
-	vulkan-valium_fixed_functions.$(OBJEXT)
+	vulkan-valium_fixed_functions.$(OBJEXT) \
+	vulkan-valium_renderpass.$(OBJEXT)
 vulkan_OBJECTS = $(am_vulkan_OBJECTS)
 vulkan_LDADD = $(LDADD)
 vulkan_LINK = $(CXXLD) $(vulkan_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
@@ -132,6 +133,7 @@ am__depfiles_remade = ./$(DEPDIR)/vulkan-main.Po \
 	./$(DEPDIR)/vulkan-valium_fixed_functions.Po \
 	./$(DEPDIR)/vulkan-valium_graphics.Po \
 	./$(DEPDIR)/vulkan-valium_queue.Po \
+	./$(DEPDIR)/vulkan-valium_renderpass.Po \
 	./$(DEPDIR)/vulkan-valium_swapchain.Po \
 	./$(DEPDIR)/vulkan-valium_view.Po ./$(DEPDIR)/vulkan-window.Po
 am__mv = mv -f
@@ -270,7 +272,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-vulkan_SOURCES = main.cpp window.cpp valium.cpp valium_queue.cpp validation_layers.cpp valium_device.cpp valium_swapchain.cpp valium_view.cpp valium_graphics.cpp valium_fixed_functions.cpp
+vulkan_SOURCES = main.cpp window.cpp valium.cpp valium_queue.cpp validation_layers.cpp valium_device.cpp valium_swapchain.cpp valium_view.cpp valium_graphics.cpp valium_fixed_functions.cpp valium_renderpass.cpp
 vulkan_CXXFLAGS = -std=c++17
 all: all-am
 
@@ -365,6 +367,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-valium_fixed_functions.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-valium_graphics.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-valium_queue.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-valium_renderpass.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-valium_swapchain.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-valium_view.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vulkan-window.Po@am__quote@ # am--include-marker
@@ -529,6 +532,20 @@ vulkan-valium_fixed_functions.obj: valium_fixed_functions.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -c -o vulkan-valium_fixed_functions.obj `if test -f 'valium_fixed_functions.cpp'; then $(CYGPATH_W) 'valium_fixed_functions.cpp'; else $(CYGPATH_W) '$(srcdir)/valium_fixed_functions.cpp'; fi`
 
+vulkan-valium_renderpass.o: valium_renderpass.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -MT vulkan-valium_renderpass.o -MD -MP -MF $(DEPDIR)/vulkan-valium_renderpass.Tpo -c -o vulkan-valium_renderpass.o `test -f 'valium_renderpass.cpp' || echo '$(srcdir)/'`valium_renderpass.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vulkan-valium_renderpass.Tpo $(DEPDIR)/vulkan-valium_renderpass.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='valium_renderpass.cpp' object='vulkan-valium_renderpass.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -c -o vulkan-valium_renderpass.o `test -f 'valium_renderpass.cpp' || echo '$(srcdir)/'`valium_renderpass.cpp
+
+vulkan-valium_renderpass.obj: valium_renderpass.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -MT vulkan-valium_renderpass.obj -MD -MP -MF $(DEPDIR)/vulkan-valium_renderpass.Tpo -c -o vulkan-valium_renderpass.obj `if test -f 'valium_renderpass.cpp'; then $(CYGPATH_W) 'valium_renderpass.cpp'; else $(CYGPATH_W) '$(srcdir)/valium_renderpass.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vulkan-valium_renderpass.Tpo $(DEPDIR)/vulkan-valium_renderpass.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='valium_renderpass.cpp' object='vulkan-valium_renderpass.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vulkan_CXXFLAGS) $(CXXFLAGS) -c -o vulkan-valium_renderpass.obj `if test -f 'valium_renderpass.cpp'; then $(CYGPATH_W) 'valium_renderpass.cpp'; else $(CYGPATH_W) '$(srcdir)/valium_renderpass.cpp'; fi`
+
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
 tags: tags-am
@@ -662,6 +679,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/vulkan-valium_fixed_functions.Po
 	-rm -f ./$(DEPDIR)/vulkan-valium_graphics.Po
 	-rm -f ./$(DEPDIR)/vulkan-valium_queue.Po
+	-rm -f ./$(DEPDIR)/vulkan-valium_renderpass.Po
 	-rm -f ./$(DEPDIR)/vulkan-valium_swapchain.Po
 	-rm -f ./$(DEPDIR)/vulkan-valium_view.Po
 	-rm -f ./$(DEPDIR)/vulkan-window.Po
@@ -717,6 +735,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/vulkan-valium_fixed_functions.Po
 	-rm -f ./$(DEPDIR)/vulkan-valium_graphics.Po
 	-rm -f ./$(DEPDIR)/vulkan-valium_queue.Po
+	-rm -f ./$(DEPDIR)/vulkan-valium_renderpass.Po
 	-rm -f ./$(DEPDIR)/vulkan-valium_swapchain.Po
 	-rm -f ./$(DEPDIR)/vulkan-valium_view.Po
 	-rm -f ./$(DEPDIR)/vulkan-window.Po

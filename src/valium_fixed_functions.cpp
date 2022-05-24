@@ -2,7 +2,7 @@
 
 using namespace ValiumFixedFnInfo;
 
-VkViewport GetViewport(uint32_t width, uint32_t height) {
+VkViewport ValiumFixedFnInfo::GetViewport(uint32_t width, uint32_t height) {
   VkViewport viewport{};
   viewport.x = 0.0f;
   viewport.y = 0.0f;
@@ -14,10 +14,21 @@ VkViewport GetViewport(uint32_t width, uint32_t height) {
   return viewport;
 }
 
-VkRect2D GetScissor(VkExtent2D extent) {
+VkRect2D ValiumFixedFnInfo::GetScissor(VkExtent2D extent) {
   VkRect2D scissor{};
   scissor.offset = {0, 0};
   scissor.extent = extent;
 
   return scissor;
+}
+
+VkPipelineViewportStateCreateInfo ValiumFixedFnInfo::GetViewportStateCreateInfo(VkViewport &viewport, VkRect2D &scissor) {
+  VkPipelineViewportStateCreateInfo viewportState{};
+  viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+  viewportState.viewportCount = 1;
+  viewportState.pViewports = &viewport;
+  viewportState.scissorCount = 1;
+  viewportState.pScissors = &scissor;
+
+  return viewportState;
 }

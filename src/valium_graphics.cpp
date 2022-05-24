@@ -1,7 +1,11 @@
 #include "valium_graphics.h"
 #include "valium_fixed_functions.h"
+#include "valium_renderpass.h"
 #include <fstream>
 #include <vector>
+#if SHOW_RESOURCE_ALLOCATION
+#include <iostream>
+#endif
 
 /**
  * Encapsulates shader information needed for using a shader
@@ -21,9 +25,19 @@ struct ShaderInfo {
 
 struct ValiumGraphics::impl {
   /**
+   * Handle to the final constructed graphics pipeline
+   */
+  VkPipeline _graphicsPipeline = VK_NULL_HANDLE;
+
+  /**
    * Handle to the current device
    */
   VkDevice _device;
+
+  /**
+   * Stores the swapchain's extent
+   */
+  VkExtent2D _extent;
 
   /**
    * Holds the shader module that will execute our shaders
@@ -34,6 +48,11 @@ struct ValiumGraphics::impl {
    * Pipeline layout used for specifying uniform values in the pipeline
    */
   VkPipelineLayout _pipelineLayout = VK_NULL_HANDLE;
+
+  /**
+   * Stores the renderpass
+   */
+  ValiumRenderPass* _renderPass = nullptr;
 
   /**
    * Reads a binary file into a char buffer
@@ -61,12 +80,19 @@ struct ValiumGraphics::impl {
    * Creates the pipelineLayout info
    */
   void _CreatePipelineLayout();
+
+  /**
+   * Constructs the final graphics pipeline
+   */
+  void _CreateGraphicsPipeline(VkExtent2D extent);
 };
 
-ValiumGraphics::ValiumGraphics(VkDevice device) {
+ValiumGraphics::ValiumGraphics(VkDevice device, VkExtent2D extent) {
   _impl = new impl();
   _impl->_device = device;
+  _impl->_extent = extent;
   _impl->_CreatePipelineLayout();
+  _impl->_renderPass = new ValiumRenderPass(device);
 }
 
 ValiumGraphics::~ValiumGraphics() {
@@ -77,6 +103,15 @@ ValiumGraphics::~ValiumGraphics() {
 
   if (_impl->_pipelineLayout != VK_NULL_HANDLE) {
     vkDestroyPipelineLayout(_impl->_device, _impl->_pipelineLayout, nullptr);
+  }
+
+  delete _impl->_renderPass;
+
+  if (_impl->_graphicsPipeline != VK_NULL_HANDLE) {
+#if SHOW_RESOURCE_ALLOCATION
+    std::cout << "Destroying the graphics pipeline" << std::endl;
+#endif
+    vkDestroyPipeline(_impl->_device, _impl->_graphicsPipeline, nullptr);
   }
 
   delete _impl;
@@ -151,4 +186,53 @@ void ValiumGraphics::impl::_CreatePipelineLayout() {
   if (vkCreatePipelineLayout(_device, &pipelineLayoutInfo, nullptr, &_pipelineLayout) != VK_SUCCESS) {
     throw std::runtime_error("failed to create pipeline layout!");
   }
+}
+
+void ValiumGraphics::impl::_CreateGraphicsPipeline(VkExtent2D extent) {
+  VkGraphicsPipelineCreateInfo pipelineInfo{};
+  pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+  // Get the shader stages from the stored shader list
+  std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
+  for (auto shader : _shaders) {
+    shaderStages.push_back(shader.createInfo);
+  }
+  pipelineInfo.stageCount = shaderStages.size();
+  pipelineInfo.pStages = shaderStages.data();
+
+  pipelineInfo.pVertexInputState = &ValiumFixedFnInfo::VERTEX_INPUT_INFO;
+  pipelineInfo.pInputAssemblyState = &ValiumFixedFnInfo::VERTEX_ASSEMBLY_INFO;
+
+  // Viewport State
+  VkViewport viewport = ValiumFixedFnInfo::GetViewport(extent.width, extent.height);
+  VkRect2D scissor = ValiumFixedFnInfo::GetScissor(extent);
+  VkPipelineViewportStateCreateInfo viewportStateCreateInfo = ValiumFixedFnInfo::GetViewportStateCreateInfo(viewport, scissor);
+
+  pipelineInfo.pViewportState = &viewportStateCreateInfo;
+
+  pipelineInfo.pRasterizationState = &ValiumFixedFnInfo::RASTERIZER_INFO;
+  pipelineInfo.pMultisampleState = &ValiumFixedFnInfo::MULTISAMPLING_INFO;
+  pipelineInfo.pDepthStencilState = nullptr; // Optional
+  pipelineInfo.pColorBlendState = &ValiumFixedFnInfo::COLOR_BLEND_INFO;
+  pipelineInfo.pDynamicState = nullptr; // Optional
+
+  pipelineInfo.layout = _pipelineLayout;
+  pipelineInfo.renderPass = _renderPass->GetVkRenderPass();
+  pipelineInfo.subpass = 0;
+
+  pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
+  pipelineInfo.basePipelineIndex = -1; // Optional
+
+  pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
+  pipelineInfo.basePipelineIndex = -1; // Optional
+
+#if SHOW_RESOURCE_ALLOCATION
+  std::cout << "Creating the graphics pipeline" << std::endl;
+#endif
+  if (vkCreateGraphicsPipelines(_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_graphicsPipeline) != VK_SUCCESS) {
+    throw std::runtime_error("failed to create graphics pipeline!");
+  }
+}
+
+void ValiumGraphics::InitializePipeline() {
+  _impl->_CreateGraphicsPipeline(_impl->_extent);
 }

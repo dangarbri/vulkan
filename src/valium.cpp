@@ -59,9 +59,6 @@ struct Valium::impl {
   /** Selects a GPU to use for rendering */
   void selectDevice();
 
-  /** Initializes the selected device */
-  void initDevice();
-
   /** Checks if a GPU is suitable for rendering */
   bool isDeviceSuitable(VkPhysicalDevice device);
 
@@ -235,8 +232,11 @@ void Valium::impl::selectDevice() {
   }
 
   // Now that a device has been selected, wrap it with some valium.
-  device = new ValiumDevice(selectedDevice, surface);
-  initDevice();
+  int width, height;
+  glfwGetFramebufferSize(window->GetWindow(), &width, &height);
+  device = new ValiumDevice(selectedDevice, surface,
+                            static_cast<uint32_t>(width),
+                            static_cast<uint32_t>(height));
 }
 
 bool Valium::impl::isDeviceSuitable(VkPhysicalDevice device) {
@@ -268,11 +268,4 @@ void Valium::impl::CreateSurface() {
 
 void Valium::impl::CreateWindow() {
   window = std::unique_ptr<Window>(new Window(app_name));
-}
-
-void Valium::impl::initDevice() {
-  int width, height;
-  glfwGetFramebufferSize(window->GetWindow(), &width, &height);
-  device->InitializeSwapchain(static_cast<uint32_t>(width),
-                              static_cast<uint32_t>(height));
 }

@@ -55,8 +55,10 @@ struct ValiumDevice::ValiumDeviceImpl {
   /**
    * Creates the swapchain for this device.
    * @note Must be called after CreateLogicalDevice().
+   * @param[in] width desired swapchain image width
+   * @param[in] height desired swapchain image height
    */
-  void CreateSwapchain();
+  void CreateSwapchain(const uint32_t width, const uint32_t height);
 
   /**
    * Initializes ValiumDeviceImpl::presentQueue.
@@ -74,10 +76,10 @@ struct ValiumDevice::ValiumDeviceImpl {
   void CreateGraphicsPipeline();
 };
 
-ValiumDevice::ValiumDevice(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) {
+ValiumDevice::ValiumDevice(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface, const uint32_t width, const uint32_t height) {
   _impl = new ValiumDeviceImpl(physicalDevice, surface);
   _impl->CreateLogicalDevice();
-  _impl->CreateSwapchain();
+  _impl->CreateSwapchain(width, height);
   _impl->CreateGraphicsPipeline();
 #ifndef NDEBUG
   std::cout << "Created logical device" << std::endl;
@@ -213,16 +215,14 @@ void ValiumDevice::ValiumDeviceImpl::GetDesiredQueues(QueueFamilyIndices indices
   }
 }
 
-void ValiumDevice::ValiumDeviceImpl::CreateSwapchain() {
+void ValiumDevice::ValiumDeviceImpl::CreateSwapchain(const uint32_t width, const uint32_t height) {
   swapchain = new ValiumSwapchain(physicalDevice, surface, device);
-}
-
-void ValiumDevice::InitializeSwapchain(uint32_t width, uint32_t height) {
-  _impl->swapchain->InitializeSwapchain(width, height);
+  swapchain->InitializeSwapchain(width, height);
 }
 
 void ValiumDevice::ValiumDeviceImpl::CreateGraphicsPipeline() {
-  pipeline = new ValiumGraphics(device);
+  pipeline = new ValiumGraphics(device, swapchain->GetExtent());
   pipeline->LoadShader("shaders/vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
   pipeline->LoadShader("shaders/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
+  pipeline->InitializePipeline();
 }

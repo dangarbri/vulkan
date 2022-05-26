@@ -3,6 +3,7 @@
 #include "validation_layers.h"
 #include "valium_swapchain.h"
 #include "valium_graphics.h"
+#include "valium_command_pool.h"
 #include <vector>
 #include <iostream>
 #include <string>
@@ -27,8 +28,14 @@ struct ValiumDevice::ValiumDeviceImpl {
   /** Queue descriptor for interfacing with the GPU's command queue */
   VkQueue graphicsQueue;
 
+  /** Cached queue information. Cached during CreateLogicalDevice() */
+  QueueFamilyIndices _indices;
+
   /** Swapchain created for this device */
   ValiumSwapchain* swapchain = nullptr;
+
+  /** The command pool for submitting commands to vulkan */
+  ValiumCommandPool* commandPool = nullptr;
 
   /**
    * @brief Queue that manages rendering contents to the window.
@@ -74,6 +81,11 @@ struct ValiumDevice::ValiumDeviceImpl {
    * Creates the graphics pipeline on the device for managing shaders
    */
   void CreateGraphicsPipeline();
+
+  /**
+   * Creates the command pool
+   */
+  void CreateCommandPool();
 };
 
 ValiumDevice::ValiumDevice(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface, const uint32_t width, const uint32_t height) {
@@ -82,6 +94,7 @@ ValiumDevice::ValiumDevice(const VkPhysicalDevice physicalDevice, const VkSurfac
   _impl->CreateSwapchain(width, height);
   _impl->CreateGraphicsPipeline();
   _impl->swapchain->InitializeFramebuffers(_impl->pipeline->GetRenderPass());
+  _impl->CreateCommandPool();
 #ifndef NDEBUG
   std::cout << "Created logical device" << std::endl;
 #endif
@@ -125,6 +138,8 @@ void ValiumDevice::ValiumDeviceImpl::CreateLogicalDevice() {
   
   // Get the desired queues to be created with the device
   QueueFamilyIndices indices = ValiumQueue::GetQueueIndices(physicalDevice, surface);
+  _indices = indices;
+
   std::vector<VkDeviceQueueCreateInfo> desiredQueues;
   float priority = 1.0f;
   GetDesiredQueues(indices, desiredQueues, &priority);
@@ -226,4 +241,8 @@ void ValiumDevice::ValiumDeviceImpl::CreateGraphicsPipeline() {
   pipeline->LoadShader("shaders/vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
   pipeline->LoadShader("shaders/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
   pipeline->InitializePipeline();
+}
+
+void ValiumDevice::ValiumDeviceImpl::CreateCommandPool() {
+  commandPool = new ValiumCommandPool(device, _indices);
 }

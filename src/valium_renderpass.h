@@ -14,6 +14,10 @@ public:
    * @returns The vulkan VkRenderPass built by this instance
    */
   VkRenderPass GetVkRenderPass() const;
+
+  /**
+   * 
+   */
  private:
   struct impl;
   impl* _impl;

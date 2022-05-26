@@ -87,10 +87,10 @@ struct ValiumGraphics::impl {
   void _CreateGraphicsPipeline(VkExtent2D extent);
 };
 
-ValiumGraphics::ValiumGraphics(VkDevice device, VkExtent2D extent) {
+ValiumGraphics::ValiumGraphics(VkDevice device, ValiumSwapchain* swapchain) {
   _impl = new impl();
   _impl->_device = device;
-  _impl->_extent = extent;
+  _impl->_extent = swapchain->GetExtent();
   _impl->_CreatePipelineLayout();
   _impl->_renderPass = new ValiumRenderPass(device);
 }

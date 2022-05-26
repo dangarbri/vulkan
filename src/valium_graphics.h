@@ -1,6 +1,7 @@
 #pragma once
 
 #include "valium_renderpass.h"
+#include "valium_swapchain.h"
 #include <vulkan/vulkan.h>
 #include <string>
 
@@ -14,9 +15,9 @@ class ValiumGraphics
    * Initializes a graphics pipeline
    *
    * @param[in] device Device to create the graphics pipeline on.
-   * @param[in] extent The surface extent
+   * @param[in] swapchain The swapchain that will be used in the graphics pipeline
    */
-  ValiumGraphics(VkDevice device, VkExtent2D extent);
+  ValiumGraphics(VkDevice device, ValiumSwapchain* swapchain);
   ~ValiumGraphics();
 
   /**

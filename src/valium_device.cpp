@@ -237,7 +237,7 @@ void ValiumDevice::ValiumDeviceImpl::CreateSwapchain(const uint32_t width, const
 }
 
 void ValiumDevice::ValiumDeviceImpl::CreateGraphicsPipeline() {
-  pipeline = new ValiumGraphics(device, swapchain->GetExtent());
+  pipeline = new ValiumGraphics(device, swapchain);
   pipeline->LoadShader("shaders/vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
   pipeline->LoadShader("shaders/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
   pipeline->InitializePipeline();
